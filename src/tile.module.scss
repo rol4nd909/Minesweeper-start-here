@@ -1,0 +1,15 @@
+.root {
+  background: #e65bcd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:not([disabled]):hover {
+    opacity: 0.5;
+  }
+
+  &.show-content {
+    background: #ffaff0;
+    cursor: not-allowed;
+  }
+}
