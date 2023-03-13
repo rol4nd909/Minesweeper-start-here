@@ -1,4 +1,4 @@
-import { IField } from "./types";
+import { IField, ITile } from "./types";
 import cloneDeep from "lodash/cloneDeep";
 
 // Configuration
@@ -19,9 +19,69 @@ export function updateField(
   const field = cloneDeep(oldField);
 
   // Update the field here.
+  const tile = field[clickedTileId];
+  tile.flag = setFlag;
+
+  if (setFlag) {
+    return field;
+  }
+
+  tile.showContent = true;
+
+  if (!tile.mine && !tile.minesAround) {
+    sweep(tile, field);
+  }
 
   return field;
 }
+
+const sweep = (tile: ITile, field: IField) => {
+  const pointsAround = [...getPointsAround(tile)];
+
+  for (const point of pointsAround) {
+    const tile = Object.values(field).find(
+      (f) => f.x === point.x && f.y === point.y
+    );
+
+    if (tile) {
+      const x = tile.showContent;
+      tile.showContent = true;
+
+      if (!tile?.minesAround && !x) {
+        sweep(tile, field);
+      }
+    }
+  }
+};
+
+type Point = {
+  x: number;
+  y: number;
+};
+
+function* getPointsAround(point: Point) {
+  for (let x = point.x - 1; x <= point.x + 1; x++) {
+    for (let y = point.y - 1; y <= point.y + 1; y++) {
+      if (
+        (x !== point.x || y !== point.y) &&
+        x >= 0 &&
+        y >= 0 &&
+        x < columns &&
+        y < columns
+      ) {
+        yield { x, y };
+      }
+    }
+  }
+}
+
+export const generateMineIndexes = () => {
+  const indices = new Set();
+  while (indices.size !== amountOfMines) {
+    indices.add(Math.floor(Math.random() * totalAmountOfTiles));
+  }
+  return indices;
+};
 
 /**
  * Generate the game, based on columns and amountOfMines

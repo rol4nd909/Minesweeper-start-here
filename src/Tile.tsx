@@ -26,7 +26,7 @@ const Tile = ({
     <button
       disabled={show}
       type="button"
-      className={`${classes.root} tile ${show ? "show-content" : ""}`}
+      className={`${classes.root} tile ${show ? "showContent" : ""}`}
       onClick={() => updateGame(id, false)}
       onContextMenu={handleFlag}
     >
